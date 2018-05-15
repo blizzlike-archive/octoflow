@@ -99,8 +99,10 @@ function github.publish_files(self, id, path)
         '/repos/' .. github.slug .. '/releases/' .. id .. '/assets?name=' .. file,
         github.api_key, fd:read('*a'), { ['Content-Type'] = mimetype })
       fd:close()
+      if code ~= 201 then return nil end
     end
   end
+  return true
 end
 
 return github
