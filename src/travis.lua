@@ -1,6 +1,14 @@
 local travis = {}
 
-function travis.init()
+function travis.execute(self, task)
+  print(task.cmd)
+  local c = os.execute(
+    'cd ' .. task.workdir .. ' && ' .. task.cmd)
+  if c ~= 0 then os.exit(1) end
+  return true
+end
+
+function travis.init(self)
   if os.getenv('TRAVIS') == 'true' then
     travis.env = {
       branch = os.getenv('TRAVIS_BRANCH'),

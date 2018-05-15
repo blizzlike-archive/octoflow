@@ -39,7 +39,14 @@ a connector to a S3 object storage (to access build artifacts in downstream stag
     #!/usr/bin/env lua
 
     local travis = require('travis')
-    local octoflow = {}
+    local octoflow = {
+      commands = {
+        cmake = {
+          cmd = 'cmake ..',
+          workdir = '/tmp/build'
+        }
+      }
+    }
 
     function octoflow.run(self)
       if not travis:init() then
@@ -59,3 +66,5 @@ a connector to a S3 object storage (to access build artifacts in downstream stag
         print('this is a build triggered by a push to master')
       end
     end
+
+    octoflow:run()
