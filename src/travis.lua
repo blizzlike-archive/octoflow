@@ -38,7 +38,7 @@ function travis.init(self)
       secure = os.getenv('TRAVIS_SECURE_ENV_VARS') == 'true',
       sudo = os.getenv('TRAVIS_SUDO') == 'true',
       result = tonumber(os.getenv('TRAVIS_TEST_RESULT')) == 0,
-      tag = os.getenv('TRAVIS_TAG')
+      tag = (os.getenv('TRAVIS_TAG') == '' and nil or os.getenv('TRAVIS_TAG'))
     }
     return true
   end
