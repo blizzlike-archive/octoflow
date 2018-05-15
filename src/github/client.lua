@@ -3,7 +3,8 @@ local https = require('ssl.https')
 local ltn12 = require('ltn12')
 
 local github = {
-  api = 'https://api.github.com'
+  api = 'https://api.github.com',
+  uploads = 'https://uploads.github.com'
 }
 
 local _toJson = function(t)
@@ -38,17 +39,17 @@ function github.call(self, url, method, apiKey, request,  header)
     headers = headers,
     source = reqBody,
     sink = ltn12.sink.table(respBody),
-    url = github.api .. url
+    url = url
   }
   links = {}
-  if respHeader['link'] then
+  if (respHeader or {})['link'] then
     local raw1, raw2 = respHeader['Link']:match('([^,]+),([^,]+')
     for i = 1, 2 do
       local link, rel = raw1:match('<(.*)>; rel="(.*)"')
       links[rel] = link
     end
   end
-  if respHeader['content-type']:match('application/json') then
+  if ((respHeader or {})['content-type'] or ''):match('application/json') then
     return respStatus, _toTable(respBody[1]), links
   else
     return respStatus
@@ -56,19 +57,23 @@ function github.call(self, url, method, apiKey, request,  header)
 end
 
 function github.delete(self, url, apiKey)
-  return github:call(url, 'DELETE', apiKey, nil, nil)
+  return github:call(github.api .. url, 'DELETE', apiKey, nil, nil)
 end
 
 function github.get(self, url, apiKey, request)
-  return github:call(url, 'GET', apiKey, request, nil)
+  return github:call(github.api .. url, 'GET', apiKey, request, nil)
 end
 
 function github.post(self, url, apiKey, request, ct)
-  return github:call(url, 'POST', apiKey, request, ct)
+  return github:call(github.api .. url, 'POST', apiKey, request, ct)
 end
 
 function github.put(self, url, apiKey, request)
-  return github:call(url, 'PUT', apiKey, request, nil)
+  return github:call(github.api .. url, 'PUT', apiKey, request, nil)
+end
+
+function github.upload(self, url, apiKey, request, ct)
+  return github:call(github.uploads .. url, 'POST', apiKey, request, ct)
 end
 
 return github

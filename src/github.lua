@@ -92,10 +92,15 @@ end
 function github.publish_files(self, id, path)
   for file in lfs.dir(path) do
     if file ~= '.' and file ~= '..' and
-        lfs.attributes(file, 'mode') == 'file' then
+        lfs.attributes(path .. '/' .. file, 'mode') == 'file' then
       local mimetype = mimetypes.guess(file)
+      if not mimetype then
+        if file:match('\.tar\.xz$') then
+          mimetype = 'application/x-compressed-tar'
+        end
+      end
       local fd = io.open(path .. '/' .. file, 'r')
-      local code, asset = client:post(
+      local code, asset = client:upload(
         '/repos/' .. github.slug .. '/releases/' .. id .. '/assets?name=' .. file,
         github.api_key, fd:read('*a'), { ['Content-Type'] = mimetype })
       fd:close()
