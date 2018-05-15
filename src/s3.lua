@@ -3,7 +3,7 @@ local lfs = require('lfs')
 local s3 = {}
 
 function s3.clear(self, bucket)
-  local _, _, c = os.execute(
+  local c = os.execute(
     'aws --endpoint-url=' .. s3.endpoint ..
       ' s3 rm --recursive ' .. bucket)
   if c == 0 then return true end
@@ -24,7 +24,7 @@ function s3.init(self, id, key, endpoint)
 end
 
 function s3.sync(self, src, dest)
-  local _, _, c = os.execute(
+  local c = os.execute(
     'aws --endpoint-url=' .. s3.endpoint ..
       ' s3 sync ' .. src .. ' ' .. dest)
   if c == 0 then return true end
