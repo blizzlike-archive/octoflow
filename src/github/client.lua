@@ -41,14 +41,14 @@ function github.call(self, url, method, apiKey, request,  header)
     url = github.api .. url
   }
   links = {}
-  if respHeader['Link'] then
+  if respHeader['link'] then
     local raw1, raw2 = respHeader['Link']:match('([^,]+),([^,]+')
     for i = 1, 2 do
       local link, rel = raw1:match('<(.*)>; rel="(.*)"')
       links[rel] = link
     end
   end
-  if respHeader['Content-Type']:match('application/json') then
+  if respHeader['content-type']:match('application/json') then
     return respStatus, _toTable(respBody[1]), links
   else
     return respStatus
