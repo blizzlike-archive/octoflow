@@ -65,7 +65,7 @@ function github.get_release(self, obj)
       github.api_key, nil)
   else
     local code, releases = self:get_releases()
-    for v in pairs(releases or {}) do
+    for _, v in pairs(releases or {}) do
       if v.name == obj.name then return v end
     end
   end
