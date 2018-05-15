@@ -44,20 +44,6 @@ function github.delete_tag(self, name)
   return nil, 'cannot delete tag'
 end
 
-function github.publish_files(self, id, path)
-  for file in lfs.dir(path) do
-    if file ~= '.' and file ~= '..' and
-        lfs.attributes(file, 'mode') == 'file' then
-      local mimetype = mimetypes.guess(file)
-      local fd = io.open(path .. '/' .. file, 'r')
-      local code, asset = client:post(
-        '/repos/' .. github.slug .. '/releases/' .. id .. '/assets?name=' .. file,
-        github.api_key, fd:read('*a'), { ['Content-Type'] = mimetype })
-      fd:close()
-    end
-  end
-end
-
 function github.get_release(self, obj)
   if (obj or {}).tag then
     local code, release = client:get(
@@ -65,11 +51,12 @@ function github.get_release(self, obj)
       github.api_key, nil)
   else
     local code, releases = self:get_releases()
-    for _, v in pairs(releases or {}) do
-      if v.name == obj.name then return v end
+    if code == 200 then
+      for _, v in pairs(releases or {}) do
+        if v.name == obj.name then return code, v end
+      end
     end
   end
-  if code == 200 then return release end
   return nil, nil, 'cannot get release object'
 end
 
@@ -99,6 +86,20 @@ function github.init(self, slug, api_key)
     github.slug = slug
     github.api_key = api_key
     return true
+  end
+end
+
+function github.publish_files(self, id, path)
+  for file in lfs.dir(path) do
+    if file ~= '.' and file ~= '..' and
+        lfs.attributes(file, 'mode') == 'file' then
+      local mimetype = mimetypes.guess(file)
+      local fd = io.open(path .. '/' .. file, 'r')
+      local code, asset = client:post(
+        '/repos/' .. github.slug .. '/releases/' .. id .. '/assets?name=' .. file,
+        github.api_key, fd:read('*a'), { ['Content-Type'] = mimetype })
+      fd:close()
+    end
   end
 end
 
