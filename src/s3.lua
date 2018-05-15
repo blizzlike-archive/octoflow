@@ -4,8 +4,8 @@ local s3 = {}
 
 function s3.clear(self, bucket)
   local _, _, c = os.execute(
-    'aws --endpoint-url=' .. s3.endpoint .. ' \
-      s3 rm --recursive ' .. bucket)
+    'aws --endpoint-url=' .. s3.endpoint ..
+      ' s3 rm --recursive ' .. bucket)
   if c == 0 then return true end
 end
 
@@ -25,8 +25,8 @@ end
 
 function s3.sync(self, src, dest)
   local _, _, c = os.execute(
-    'aws --endpoint-url=' .. s3.endpoint .. ' \
-      s3 sync ' .. src .. ' ' .. dest)
+    'aws --endpoint-url=' .. s3.endpoint ..
+      ' s3 sync ' .. src .. ' ' .. dest)
   if c == 0 then return true end
 end
 
