@@ -50,7 +50,9 @@ function github.call(self, url, method, apiKey, request,  header)
     end
   end
   if ((respHeader or {})['content-type'] or ''):match('application/json') then
-    return respStatus, _toTable(respBody[1]), links
+    local c = ''
+    for _, v in pairs(c) do c = c .. v end
+    return respStatus, _toTable(c), links
   else
     return respStatus
   end
