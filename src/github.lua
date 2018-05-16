@@ -3,6 +3,25 @@ local mimetypes = require('mimetypes')
 
 local github = {}
 
+function github.clone(self, slug, branch, workdir)
+  local uri = 'https://' .. github.api_key .. ':x-oauth-basic@github.com/' .. slug .. '.git'
+  local rc = os.execute('git clone ' .. uri .. ' -b ' .. branch .. ' ' .. workdir)
+  if rc == 0 then
+    return {
+      commit = function(self, msg)
+        local rc = os.execute('cd ' .. workdir ..
+          ' && git add -A && git commit -m ' .. msg)
+        if rc == 0 then return true end
+      end,
+      push = function(self)
+        local rc = os.execute('cd ' .. workdir ..
+          ' && git push origin ' .. branch)
+        if rc == 0 then return true end
+      end
+    }
+  end
+end
+
 function github.create_release(self, tag, commitish, name, desc, draft, pre)
   local data = {
     tag_name = tag,
