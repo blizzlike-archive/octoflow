@@ -13,6 +13,7 @@ source = {
 }
 
 dependencies = {
+  "lua 5.1",
   "lua-cjson",
   "luafilesystem",
   "luasocket",

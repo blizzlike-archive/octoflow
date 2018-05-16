@@ -62,7 +62,7 @@ a connector to a S3 object storage (to access build artifacts in downstream stag
       if not travis:execute(octoflow.commands.make) then os.exit(1) end
 
       if travis.env.type ~= 'pull_request' and
-          travis.env.branch == 'master' and not travis.env.tag then
+          travis.env.branch == 'master' then
         print('this is a build triggered by a push to master')
       end
     end
