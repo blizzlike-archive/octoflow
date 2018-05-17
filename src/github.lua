@@ -69,14 +69,14 @@ function github.get_release(self, obj)
       '/repos/' .. github.slug .. '/releases/tags/' .. tag,
       github.api_key, nil)
   else
-    local code, releases = self:get_releases()
-    if code == 200 then
+    local releases = self:get_releases()
+    if releases then
       for _, v in pairs(releases or {}) do
-        if v.name == obj.name then return code, v end
+        if v.name == obj.name then return v end
       end
     end
   end
-  return nil, nil, 'cannot get release object'
+  return nil, 'cannot get release object'
 end
 
 function github.get_releases(self, page)
@@ -88,8 +88,8 @@ function github.get_releases(self, page)
     local _, _releases = self:get_releases(page)
     for _, v in pairs(_releases or {}) do table.insert(releases, v) end
   end
-  if code == 200 then return code, releases end
-  return nil, nil, 'cannot get release page'
+  if code == 200 then return releases end
+  return nil, 'cannot get release page'
 end
 
 function github.get_tag(self, name)
