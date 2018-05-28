@@ -4,13 +4,14 @@ local mimetypes = require('mimetypes')
 local github = {}
 
 function github.clone(self, slug, branch, workdir)
+  if not workdir then return nil, 'workdir must be set' end
   local uri = 'https://' .. github.api_key .. ':x-oauth-basic@github.com/' .. slug .. '.git'
   local rc = os.execute('git clone ' .. uri .. ' -b ' .. branch .. ' ' .. workdir)
   if rc == 0 then
     return {
       commit = function(self, msg)
         local rc = os.execute('cd ' .. workdir ..
-          ' && git add -A && git commit -m ' .. msg)
+          ' && git add -A && git commit -m "' .. msg .. '"')
         if rc == 0 then return true end
       end,
       push = function(self)
